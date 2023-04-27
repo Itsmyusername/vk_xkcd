@@ -68,6 +68,7 @@ def on_wall_post(token, group_id, message, attachments):
     payload = {'access_token': token,
                'v': VK_API_VERSION,
                'owner_id': f'-{group_id}',
+               'from_group': group_id,
                'message': message,
                'attachments': attachments}
     response = requests.post(url, params=payload).json()
