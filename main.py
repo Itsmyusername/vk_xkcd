@@ -7,7 +7,7 @@ VK_API_URL = 'https://api.vk.com/method/'
 VK_API_VERSION = '5.131'
 
 
-def get_new_comics():
+def get_random_comics():
     url = 'https://xkcd.com/info.0.json'
     response = requests.get(url)
     response.raise_for_status()
@@ -75,14 +75,14 @@ def upload_wall_post(token, group_id, message, attachments):
 
 
 def main():
+    load_dotenv()
     token = os.environ['VK_TOKEN']
     group_id = os.environ['GROUP_ID']
-    filename, caption = get_new_comics()
+    filename, caption = get_random_comics()
     server, photo, hash_value = get_uploaded_photo_params(token, filename)
     attachments = 'photo2094408_{}'.format(get_saved_photo_id(token, server, photo, hash_value))
     upload_wall_post(token, group_id, caption, attachments)
 
 
 if __name__ == '__main__':
-    load_dotenv()
     main()
