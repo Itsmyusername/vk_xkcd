@@ -2,6 +2,7 @@ import requests
 import os
 import random
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 VK_API_URL = 'https://api.vk.com/method/'
 VK_API_VERSION = '5.131'
@@ -17,7 +18,8 @@ def get_random_comic():
     response = requests.get(url)
     response_comic = response.json()
     img_link = response_comic['img']
-    filename = img_link.split('/')[-1]
+    parsed_url = urlparse(img_link)
+    filename = parsed_url.path.split('/')[-1]
     img_comic = requests.get(img_link)
     with open(filename, 'wb') as file:
         file.write(img_comic.content)
@@ -91,7 +93,6 @@ def main():
         os.remove(filename)
     attachments = save_photo_on_server(token, server, photo, hash_value)
     on_wall_post(token, group_id, caption, f'Photo{attachments}')
-    print(on_wall_post)
 
 
 if __name__ == '__main__':
