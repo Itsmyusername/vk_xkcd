@@ -75,8 +75,8 @@ def upload_wall_post(token, group_id, message, attachments):
 
 
 def main():
-    token = os.getenv('VK_TOKEN')
-    group_id = os.getenv('GROUP_ID')
+    token = os.environ['VK_TOKEN']
+    group_id = os.environ['GROUP_ID']
     filename, caption = get_new_comics()
     server, photo, hash_value = get_uploaded_photo_params(token, filename)
     attachments = 'photo2094408_{}'.format(get_saved_photo_id(token, server, photo, hash_value))
