@@ -16,13 +16,13 @@ def get_random_comic():
     url = 'https://xkcd.com/{}/info.0.json'.format(str(download_num))
     response = requests.get(url)
     response.raise_for_status()
-    response_data = response.json()
-    img_link = response_data['img']
+    response_comic = response.json()
+    img_link = response_comic['img']
     filename = img_link.split('/')[-1]
-    img_data = requests.get(img_link)
+    img_comic = requests.get(img_link)
     with open(filename, 'wb') as file:
-        file.write(img_data.content)
-    caption = response_data['alt']
+        file.write(img_comic.content)
+    caption = response_comic['alt']
     return filename, caption
 
 
