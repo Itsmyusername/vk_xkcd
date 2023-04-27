@@ -33,7 +33,7 @@ def check_vk_response(response):
 
 def upload_photo_to_server_vk(token, filename):
     method = 'photos.getWallUploadServer'
-    url = VK_API_URL + method
+    url = f'https://api.vk.com/method/{method}'
     payload = {'access_token': token,
                'v': VK_API_VERSION}
     response = requests.get(url, params=payload).json()
@@ -51,7 +51,7 @@ def upload_photo_to_server_vk(token, filename):
 
 def save_photo_on_server(token, server, photo, hash_value):
     method = 'photos.saveWallPhoto'
-    url = VK_API_URL + method
+    url = f'https://api.vk.com/method/{method}'
     payload = {'access_token': token,
                'v': VK_API_VERSION,
                'server': server,
@@ -64,10 +64,10 @@ def save_photo_on_server(token, server, photo, hash_value):
 
 def on_wall_post(token, group_id, message, attachments):
     method = 'wall.post'
-    url = VK_API_URL + method
+    url = f'https://api.vk.com/method/{method}'
     payload = {'access_token': token,
                'v': VK_API_VERSION,
-               'owner_id': '-' + group_id,
+               'owner_id': f'-{group_id}',
                'message': message,
                'attachments': attachments}
     response = requests.post(url, params=payload).json()
