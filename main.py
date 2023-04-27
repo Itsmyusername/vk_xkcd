@@ -31,7 +31,7 @@ def check_vk_response(response):
         raise requests.HTTPError(response['error']['error_msg'])
 
 
-def get_uploaded_photo_params(token, filename):
+def upload_photo_to_server_vk(token, filename):
     method = 'photos.getWallUploadServer'
     url = VK_API_URL + method
     payload = {'access_token': token,
@@ -49,7 +49,7 @@ def get_uploaded_photo_params(token, filename):
         return server, photo, hash_value
 
 
-def get_saved_photo_id(token, server, photo, hash_value):
+def save_photo_on_server(token, server, photo, hash_value):
     method = 'photos.saveWallPhoto'
     url = VK_API_URL + method
     payload = {'access_token': token,
@@ -62,7 +62,7 @@ def get_saved_photo_id(token, server, photo, hash_value):
     return response['response'][0]['id']
 
 
-def upload_wall_post(token, group_id, message, attachments):
+def on_wall_post(token, group_id, message, attachments):
     method = 'wall.post'
     url = VK_API_URL + method
     payload = {'access_token': token,
@@ -79,9 +79,9 @@ def main():
     token = os.environ['VK_TOKEN']
     group_id = os.environ['GROUP_ID']
     filename, caption = get_random_comic()
-    server, photo, hash_value = get_uploaded_photo_params(token, filename)
-    attachments = 'photo2094408_{}'.format(get_saved_photo_id(token, server, photo, hash_value))
-    upload_wall_post(token, group_id, caption, attachments)
+    server, photo, hash_value = upload_photo_to_server_vk(token, filename)
+    attachments = 'photo2094408_{}'.format(save_photo_on_server(token, server, photo, hash_value))
+    on_wall_post(token, group_id, caption, attachments)
 
 
 if __name__ == '__main__':
