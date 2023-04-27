@@ -15,7 +15,6 @@ def get_random_comic():
     download_num = random.randint(1, max_num)
     url = 'https://xkcd.com/{}/info.0.json'.format(str(download_num))
     response = requests.get(url)
-    response.raise_for_status()
     response_comic = response.json()
     img_link = response_comic['img']
     filename = img_link.split('/')[-1]
@@ -36,15 +35,19 @@ def upload_photo_to_server_vk(token, filename):
     url = f'https://api.vk.com/method/{method}'
     payload = {'access_token': token,
                'v': VK_API_VERSION}
-    response = requests.get(url, params=payload).json()
+    response = requests.get(url, params=payload)
+    response.raise_for_status()
+    response = response.json()
     check_vk_response(response)
     upload_url = response['response']['upload_url']
     with open(filename, 'rb') as image_file_descriptor:
-        upload_response = requests.post(upload_url, files={'photo': image_file_descriptor}).json()
-        server = upload_response['server']
-        photo = upload_response['photo']
-        hash_value = upload_response['hash']
-        return server, photo, hash_value
+        upload_response = requests.post(upload_url, files={'photo': image_file_descriptor})
+        upload_response.raise_for_status()
+        upload_response = upload_response.json()
+    server = upload_response['server']
+    photo = upload_response['photo']
+    hash_value = upload_response['hash']
+    return server, photo, hash_value
 
 
 def save_photo_on_server(token, server, photo, hash_value):
@@ -55,7 +58,9 @@ def save_photo_on_server(token, server, photo, hash_value):
                'server': server,
                'photo': photo,
                'hash': hash_value}
-    response = requests.post(url, params=payload).json()
+    response = requests.post(url, params=payload)
+    response.raise_for_status()
+    response = response.json()
     check_vk_response(response)
     return response['response'][0]['id']
 
@@ -69,7 +74,9 @@ def on_wall_post(token, group_id, message, attachments):
                'from_group': group_id,
                'message': message,
                'attachments': attachments}
-    response = requests.post(url, params=payload).json()
+    response = requests.post(url, params=payload)
+    response.raise_for_status()
+    response = response.json()
     check_vk_response(response)
 
 
@@ -82,8 +89,9 @@ def main():
         server, photo, hash_value = upload_photo_to_server_vk(token, filename)
     finally:
         os.remove(filename)
-    attachments = 'photo2094408_{}'.format(save_photo_on_server(token, server, photo, hash_value))
-    on_wall_post(token, group_id, caption, attachments)
+    attachments = save_photo_on_server(token, server, photo, hash_value)
+    on_wall_post(token, group_id, caption, f'Photo{attachments}')
+    print(on_wall_post)
 
 
 if __name__ == '__main__':
