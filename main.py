@@ -44,8 +44,6 @@ def upload_photo_to_server_vk(token, filename):
         server = upload_response['server']
         photo = upload_response['photo']
         hash_value = upload_response['hash']
-        image_file_descriptor.close()
-        os.remove(filename)
         return server, photo, hash_value
 
 
@@ -80,7 +78,10 @@ def main():
     token = os.environ['VK_TOKEN']
     group_id = os.environ['GROUP_ID']
     filename, caption = get_random_comic()
-    server, photo, hash_value = upload_photo_to_server_vk(token, filename)
+    try:
+        server, photo, hash_value = upload_photo_to_server_vk(token, filename)
+    finally:
+        os.remove(filename)
     attachments = 'photo2094408_{}'.format(save_photo_on_server(token, server, photo, hash_value))
     on_wall_post(token, group_id, caption, attachments)
 
