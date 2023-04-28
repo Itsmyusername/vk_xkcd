@@ -73,7 +73,7 @@ def post_on_wall(token, group_id, message, attachments):
     payload = {'access_token': token,
                'v': VK_API_VERSION,
                'owner_id': f'-{group_id}',
-               'from_group': group_id,
+               'from_group': 1,
                'message': message,
                'attachments': attachments}
     response = requests.post(url, params=payload)
@@ -91,8 +91,9 @@ def main():
         server, photo, hash_value = upload_photo_to_server_vk(token, filename)
     finally:
         os.remove(filename)
-    attachments = save_photo_on_server(token, server, photo, hash_value)
-    post_on_wall(token, group_id, caption, f'photo-{group_id}_{attachments}')
+    photo_id = save_photo_on_server(token, server, photo, hash_value)
+    post_on_wall(token, group_id, caption, f'photo-{photo_id}')
+
 
 if __name__ == '__main__':
     main()
