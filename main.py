@@ -85,7 +85,7 @@ def post_on_wall(token, group_id, message, attachments):
 def main():
     load_dotenv()
     token = os.environ['VK_TOKEN']
-    group_id = os.environ['GROUP_ID']
+    group_id = os.environ['VK_GROUP_ID']
     filename, caption = get_random_comic()
     try:
         server, photo, hash_value = upload_photo_to_server_vk(token, filename)
