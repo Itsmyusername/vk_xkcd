@@ -44,8 +44,8 @@ def upload_photo_to_server_vk(token, filename):
     upload_url = response['response']['upload_url']
     with open(filename, 'rb') as image_file_descriptor:
         upload_response = requests.post(upload_url, files={'photo': image_file_descriptor})
-        upload_response.raise_for_status()
-        upload_response = upload_response.json()
+    upload_response.raise_for_status()
+    upload_response = upload_response.json()
     server = upload_response['server']
     photo = upload_response['photo']
     hash_value = upload_response['hash']
