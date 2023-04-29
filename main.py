@@ -64,7 +64,7 @@ def save_photo_on_server(token, server, photo, hash_value):
     response.raise_for_status()
     response = response.json()
     check_vk_response(response)
-    return response['response'][0]['id']
+    return response['response'][0]
 
 
 def post_on_wall(token, group_id, message, attachments):
@@ -75,7 +75,7 @@ def post_on_wall(token, group_id, message, attachments):
                'owner_id': f'-{group_id}',
                'from_group': 1,
                'message': message,
-               'attachments': attachments}
+               'attachments': [attachments]}
     response = requests.post(url, params=payload)
     response.raise_for_status()
     response = response.json()
@@ -91,8 +91,9 @@ def main():
         server, photo, hash_value = upload_photo_to_server_vk(token, filename)
     finally:
         os.remove(filename)
-    photo_id = save_photo_on_server(token, server, photo, hash_value)
-    post_on_wall(token, group_id, caption, f'photo-{photo_id}')
+    photo_data = save_photo_on_server(token, server, photo, hash_value)
+    attachment = "photo{}_{}".format(photo_data["owner_id"], photo_data["id"])
+    post_on_wall(token, group_id, caption, attachment)
 
 
 if __name__ == '__main__':
